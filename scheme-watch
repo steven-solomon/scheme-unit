@@ -1,0 +1,37 @@
+#!/bin/sh
+NOW=$(date)
+function watch {
+  printf "Watching %s\n" "$1"
+  
+  date=$(stat -f "%a" $1)
+  while [ true ]
+  do
+
+    latest=$(stat -f "%a" $1)
+    if [ $latest -gt $date ]; then
+      printf "Running file %s\n" "$1"
+      guile $1
+      date=$latest
+      printf "\n"
+    fi
+  done
+}
+
+function can_only_watch_one_file {
+  echo 'Error: Can only watch one file'
+  exit 1 
+}
+
+function must_specify_a_file {
+  echo 'Error: Must specify a file!'
+  exit 1
+}
+
+if [ $# -gt 1 ]; then
+  can_only_watch_one_file
+elif [ $# == 0 ]; then
+  must_specify_a_file
+else 
+  watch $1
+fi
+
