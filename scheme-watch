@@ -2,12 +2,14 @@
 NOW=$(date)
 function watch {
   printf "Watching %s\n" "$1"
-  
-  date=$(stat -f "%a" $1)
+
+  date=0
   while [ true ]
   do
-
     latest=$(stat -f "%a" $1)
+    if [ $? == 1 ]; then
+      exit 1
+    fi
     if [ $latest -gt $date ]; then
       printf "Running file %s\n" "$1"
       guile $1
