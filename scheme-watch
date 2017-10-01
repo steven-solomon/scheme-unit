@@ -6,16 +6,14 @@ function watch {
   date=0
   while [ true ]
   do
-    latest=$(stat -f "%a" $1)
-    if [ $? == 1 ]; then
-      exit 1
-    fi
+    latest=$(stat -f "%a" $1) || 0
     if [ $latest -gt $date ]; then
       printf "Running file %s\n" "$1"
       guile $1
       date=$latest
       printf "\n"
     fi
+    sleep 1
   done
 }
 
@@ -29,11 +27,19 @@ function must_specify_a_file {
   exit 1
 }
 
+function verify_file_exists {
+  if [ ! test -f $1 ]; then
+    printf "Error file: %s must exist" "$1"
+    exit 1
+  fi
+}
+
 if [ $# -gt 1 ]; then
   can_only_watch_one_file
 elif [ $# == 0 ]; then
   must_specify_a_file
 else 
+  verify_file_exists $1
   watch $1
 fi
 
