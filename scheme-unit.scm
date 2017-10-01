@@ -42,13 +42,10 @@
 (unless (zero? (failing-count (run '()))) 
   (error "empty suite should have no failures"))
 
-(define passing-test
-  (lambda ()
-    (assert #t)))
+(define (passing-test) (assert #t))
 
-(define status 
-  (lambda (report)
-    (car (cdr (cdr report)))))
+(define (status report)
+    (car (cdr (cdr report))))
 
 (unless (eq? (passing-count (run (list passing-test))) 1)
   (error "one passing suite should have passing"))
@@ -59,9 +56,7 @@
 (unless (eq? (status (run (list passing-test))) "SUCCESS")
   (error "status should be success"))
 
-(define failing-test 
-  (lambda ()
-    #f))
+(define (failing-test) (assert #f))
 
 (unless (zero? (passing-count (run (list failing-test))))
   (error "failing suite should have no passing"))
